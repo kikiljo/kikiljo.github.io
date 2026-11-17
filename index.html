@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jianjun Ou</title>
 <meta name="description" content="Jianjun Ou (kikiljo), machine learning systems, Duke University.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:title" content="Jianjun Ou">
+<meta property="og:description" content="Machine learning systems at Duke University.">
+<meta property="og:url" content="https://kikiljo.com/">
+<meta property="og:image" content="https://kikiljo.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -75,7 +82,7 @@
 <header>
   <div>
     <h1>Jianjun Ou</h1>
-    <div class="sm" role="img" aria-label="An animated grid of 132 GPU streaming multiprocessors being scheduled" title="132 SMs, as on an H200. None stays idle for long."></div>
+    <div class="sm" role="img" aria-label="An animated grid of cluster nodes being scheduled" title="A GPU cluster at work. No node stays idle for long."></div>
     <nav class="links">
       <a href="mailto:jianjun.ou@duke.edu">Email</a>
       <a href="cv.pdf">CV</a>
@@ -130,7 +137,7 @@
 
 </main>
 <script>
-  // 132 SMs. Kernels finish, SMs go idle, the scheduler fills them again.
+  // A cluster of 132 nodes. Jobs finish, nodes go idle, the scheduler fills them again.
   const grid = document.querySelector('.sm');
   const N = 132, cells = [];
   for (let i = 0; i < N; i++) cells.push(grid.appendChild(document.createElement('i')));
