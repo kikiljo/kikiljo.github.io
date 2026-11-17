@@ -12,12 +12,14 @@
   :root {
     --bg: #ffffff; --ink: #1b2130; --muted: #5d6678;
     --rule: #e2e5eb; --link: #2c4bd1; --idle: #e6e9ef;
+    --j0: #2c4bd1; --j1: #6a82e6; --j2: #1c2f8f;
     --sans: "IBM Plex Sans", system-ui, sans-serif;
     --serif: "IBM Plex Serif", Georgia, serif;
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #14171d; --ink: #e7e9ee; --muted: #9aa2b1;
-            --rule: #2a2f38; --link: #8fa6ff; --idle: #262b34; }
+            --rule: #2a2f38; --link: #8fa6ff; --idle: #262b34;
+            --j0: #8fa6ff; --j1: #5d74d6; --j2: #c3cfff; }
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink);
@@ -29,9 +31,11 @@
 
   header { display: flex; gap: 32px; align-items: flex-start; justify-content: space-between; }
   h1 { font: 600 2.1rem/1.15 var(--sans); letter-spacing: -0.015em; margin: 0 0 14px; }
-  .sm { display: grid; grid-template-columns: repeat(24, 7px); gap: 2px; margin-bottom: 20px; }
-  .sm i { width: 7px; height: 7px; border-radius: 1.5px; background: var(--idle); transition: background .25s; }
-  .sm i.on { background: var(--link); }
+  .sm { display: grid; grid-template-columns: repeat(33, 6px); gap: 2px; margin-bottom: 20px; }
+  .sm i { width: 6px; height: 6px; border-radius: 1px; background: var(--idle); transition: background .35s; }
+  .sm i.j0 { background: var(--j0); }
+  .sm i.j1 { background: var(--j1); }
+  .sm i.j2 { background: var(--j2); }
   .links { font: 500 0.95rem var(--sans); display: flex; flex-wrap: wrap; gap: 6px 20px; }
   .photo { position: relative; flex: none; width: 148px; height: 148px; border-radius: 10px; overflow: hidden;
            background: var(--idle); display: grid; place-items: center;
@@ -71,12 +75,12 @@
 <header>
   <div>
     <h1>Jianjun Ou</h1>
-    <div class="sm" role="img" aria-label="A grid of streaming multiprocessors, none left idle" title="No idle SMs."></div>
+    <div class="sm" role="img" aria-label="An animated grid of 132 GPU streaming multiprocessors being scheduled" title="132 SMs, as on an H200. None stays idle for long."></div>
     <nav class="links">
-      <a href="mailto:YOUR-EMAIL@duke.edu">Email</a>  <!-- TODO: your email -->
+      <a href="mailto:jianjun.ou@duke.edu">Email</a>
       <a href="cv.pdf">CV</a>
+      <a href="https://scholar.google.com/citations?user=jud--WQAAAAJ&amp;hl=en">Google Scholar</a>
       <a href="https://github.com/kikiljo">GitHub</a>
-      <!-- <a href="https://scholar.google.com/citations?user=YOUR_ID">Google Scholar</a> -->
     </nav>
   </div>
   <div class="photo">JO<img src="headshot.jpg" alt="Photo of Jianjun Ou" onerror="this.remove()"></div>
@@ -84,9 +88,9 @@
 
 <section>
   <h2>Research</h2>
-  <p>I'm a master's student in computer science at Duke University, where I work with Matthew Lentz on machine learning systems.</p>
+  <p>I'm a master's student in computer science at Duke University, advised by Prof. Matthew Lentz. I work on machine learning systems.</p>
   <p>I look for places where AI workloads and the hardware beneath them don't fit: work that gets thrown away and redone, state that could have been reused, compute that sits idle. My recent work lets decode run speculatively on invalidated KV cache, so it no longer waits on a fresh prefill. I believe lasting progress in AI will come from software and hardware evolving together, and that is the direction I want to push.</p>
-  <p>Before Duke, I was an HPC engineer and then a trader at a quantitative trading firm.</p>
+  <p>Before Duke, I was an HPC engineer and then a trader at Uranus Research, a quantitative trading firm.</p>
   <p>I am applying to PhD programs for Fall 2027.</p>
 </section>
 
@@ -119,23 +123,31 @@
 <section>
   <h2>Education</h2>
   <div class="row"><div>Duke University<br><span class="sub">M.S. in Computer Science</span></div><div class="when">2025 – 2027</div></div>
-  <!-- TODO: undergraduate university, degree and years -->
-  <div class="row"><div>[Undergraduate university]<br><span class="sub">B.S. in [major]</span></div><div class="when">[years]</div></div>
+  <div class="row"><div>Sun Yat-sen University<br><span class="sub">B.Eng. in Computer Science</span></div><div class="when">2020 – 2024</div></div>
 </section>
 
-<footer>Last updated November 2026.</footer>
+<footer>Also reachable at oujianjunjayjay@gmail.com. Last updated November 2026.</footer>
 
 </main>
 <script>
-  // 48 "SMs" that light up once on load: nothing left idle.
+  // 132 SMs. Kernels finish, SMs go idle, the scheduler fills them again.
   const grid = document.querySelector('.sm');
-  for (let i = 0; i < 48; i++) grid.appendChild(document.createElement('i'));
-  const cells = [...grid.children];
+  const N = 132, cells = [];
+  for (let i = 0; i < N; i++) cells.push(grid.appendChild(document.createElement('i')));
+  const run = c => { c.className = 'j' + (Math.random() * 3 | 0); };
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    cells.forEach(c => c.classList.add('on'));
+    cells.forEach(run);
   } else {
-    cells.sort(() => Math.random() - 0.5)
-         .forEach((c, k) => setTimeout(() => c.classList.add('on'), 250 + k * 22));
+    cells.forEach(c => { if (Math.random() < 0.5) run(c); });
+    const idle = cells.filter(c => !c.className).sort(() => Math.random() - 0.5);
+    idle.forEach((c, k) => setTimeout(() => run(c), 300 + k * 25));
+    const tick = () => {
+      const c = cells[Math.random() * N | 0];
+      c.className = '';
+      setTimeout(() => run(c), 400 + Math.random() * 800);
+      setTimeout(tick, 80 + Math.random() * 220);
+    };
+    setTimeout(tick, 700 + idle.length * 25);
   }
 </script>
 </body>
